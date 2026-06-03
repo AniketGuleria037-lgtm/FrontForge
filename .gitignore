@@ -1,0 +1,7 @@
+.venv/ 
+__pycache__/ 
+*.pyc 
+generated-app/ 
+.env 
+node_modules/ 
+dist/ 
