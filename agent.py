@@ -74,3 +74,22 @@ def parse_response(raw):
     data = json.loads(text[:end])
     print(f"Parsed {len(data['files'])} files successfully")
     return data
+
+def write_files(data):
+    print(f"Writing files to {OUTPUT_DIR}/")
+    
+    # Delete old generated app if exists
+    if OUTPUT_DIR.exists():
+        shutil.rmtree(OUTPUT_DIR)
+    OUTPUT_DIR.mkdir(parents=True)
+    
+    # Write each file
+    for file in data["files"]:
+        file_path = OUTPUT_DIR / file["path"]
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        content = file["content"]
+        content = content.replace("\\n", "\n").replace("\\t", "\t")
+        
+        file_path.write_text(content, encoding="utf-8")
+        print(f"  Wrote: {file['path']}")
