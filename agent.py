@@ -93,3 +93,35 @@ def write_files(data):
         
         file_path.write_text(content, encoding="utf-8")
         print(f"  Wrote: {file['path']}")
+
+def write_package_json(data):
+    print("Writing package.json...")
+    
+    package_json = {
+        "name": data.get("project_name", "frontforge-app"),
+        "private": True,
+        "version": "0.0.1",
+        "type": "module",
+        "scripts": {
+            "dev":     "vite",
+            "build":   "vite build",
+            "preview": "vite preview"
+        },
+        "dependencies": {
+            "react": "^18.2.0",
+            "react-dom": "^18.2.0",
+            **data.get("dependencies", {})
+        },
+        "devDependencies": {
+            "@vitejs/plugin-react": "^4.0.0",
+            "vite": "^5.0.0",
+            "tailwindcss": "^3.4.0",
+            "autoprefixer": "^10.4.0",
+            "postcss": "^8.4.0",
+            **data.get("devDependencies", {})
+        }
+    }
+    
+    path = OUTPUT_DIR / "package.json"
+    path.write_text(json.dumps(package_json, indent=2), encoding="utf-8")
+    print("package.json written")
