@@ -25,23 +25,25 @@ def call_ollama(user_prompt, system_prompt):
     payload = {
         "model": MODEL,
         "system": system_prompt,
-        "prompt": user_prompt,
+        "prompt": f"Build this React app and return ONLY JSON: {user_prompt}",
         "stream": False,
         "think": False,
+        "format": "json",
         "options": {
-            "temperature": 0.2,
+            "temperature": 0.1,
             "num_ctx": 4096,
             "num_predict": 4096
         }
     }
     
-    response = requests.post(OLLAMA_URL, json=payload, timeout=300)
+    response = requests.post(OLLAMA_URL, json=payload, timeout=600)
     raw = response.json()["response"]
     print(f"Received {len(raw)} characters from model")
     return raw
 
 def parse_response(raw):
     print("Parsing model response...")
+    print("RAW OUTPUT FIRST 200 CHARS:", raw[:200])
     
     # Remove Qwen3 thinking tags if present
     text = re.sub(r'<think>.*?</think>', '', raw, flags=re.DOTALL).strip()
@@ -110,6 +112,7 @@ def write_package_json(data):
         "dependencies": {
             "react": "^18.2.0",
             "react-dom": "^18.2.0",
+            "react-router-dom": "^6.8.0",
             **data.get("dependencies", {})
         },
         "devDependencies": {
@@ -199,10 +202,11 @@ def npm_install():
     print("Running npm install...")
     
     result = subprocess.run(
-        ["npm", "install"],
+        "npm install",
         cwd=OUTPUT_DIR,
         capture_output=True,
-        text=True
+        text=True,
+        shell=True
     )
     
     if result.returncode != 0:
@@ -217,10 +221,11 @@ def npm_build():
     print("Running npm run build...")
     
     result = subprocess.run(
-        ["npm", "run", "build"],
+        "npm run build",
         cwd=OUTPUT_DIR,
         capture_output=True,
-        text=True
+        text=True,
+        shell=True
     )
     
     if result.returncode == 0:
