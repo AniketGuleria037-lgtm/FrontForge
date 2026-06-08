@@ -1,0 +1,150 @@
+================================================================================
+REACT CORE ARCHITECTURE, LIFECYCLE, AND SCHEDULING TECHNICAL REFERENCE
+1.1 Virtual DOM and Fiber Architecture Execution
+React decouples structural UI definitions from immediate browser DOM mutations
+using an in-memory Virtual DOM. The core scheduling engine, React Fiber, breaks
+monolithic render workloads into asynchronous, prioritize-able operational chunks.
+
+The framework processes UI reconciliation inside two distinct operational phases:
+
+A. Render Phase:
+
+Evaluates the component tree, executes functional components, and performs
+diffing algorithms.
+
+Computes structural variations between current and upcoming Virtual DOM trees.
+
+This phase is pure, side-effect-free, and may be paused, aborted, or
+re-started concurrently by the Fiber scheduler depending on task priority.
+
+B. Commit Phase:
+
+Synchronously updates the host browser DOM nodes to mirror the target layout changes.
+
+Executes structural mutations (insertions, removals, updates) sequentially.
+
+Invokes layout effects and lifecycle hooks immediately post-mutation. This
+phase cannot be interrupted.
+
+1.2 React Hooks API and Rules of Engagement
+Hooks maintain stateful tracking for functional components within the fiber memory block.
+Strict Semantic Invariants: Hooks must strictly be called at the root boundary
+level of a React functional component or a custom hook. Execution inside loops,
+evaluation blocks, branches, or nested functions is structurally invalid.
+
+A. Primitive State Management: useState
+
+Signature: useState(initialState: T | (() => T)): [T, Dispatch<SetStateAction>]
+
+Evaluates the initial value parameter once upon first mount. If a callback
+is provided, it executes as a lazy initialization mechanism to prevent
+re-computation of heavy data on subsequent re-renders.
+
+State dispatch updates operate asynchronously. To safely mutate values based on
+prior calculations, use functional parameter syntax:
+setState(prevState => prevState + 1);
+
+B. Complex State Architecture: useReducer
+
+Signature: useReducer(reducer: (state, action) => state, initialArg, init?)
+
+Preferred over useState for multi-nested state graphs, state changes with complex
+branching logic, or when next state values structurally depend on previous state arrays.
+
+C. Compute Optimization: useMemo
+
+Signature: useMemo(factory: () => T, deps: DependencyList): T
+
+Caches the exact calculated value returned from an intensive computational function.
+
+Prevents execution of the wrapped operation across re-renders unless explicit
+primitives provided inside the dependency array undergo an Object.is equality failure.
+
+D. Reference Stability: useCallback
+
+Signature: useCallback(callback: T, deps: DependencyList): T
+
+Persists the identical reference address of a declared function instance across renders.
+
+Essential to preserve functional equality constraints when passing event handlers down
+to optimized child components wrapped in React.memo to block cascade re-renders.
+
+E. Post-Paint Asynchronous Effects: useEffect
+
+Signature: useEffect(effect: () => void | (() => void), deps?: DependencyList): void
+
+Executes asynchronously after the browser completes layout calculations and
+screen paint tasks. Designed specifically for non-blocking operations and external
+system synchronizations (e.g., API calls, socket connections).
+
+Cleanup Signature: The closure returned by the effect callback fires immediately
+before the host component unmounts and before the effect re-runs due to a changed dependency.
+
+Dependency Array Mechanics:
+
+Omitted ([] absent): Runs on every lifecycle render pass.
+
+Empty Array ([]): Runs once on component mount, cleanup runs on unmount.
+
+Populated Array ([a, b]): Evaluates execution exclusively when the dependency references shift.
+
+F. Pre-Paint Synchronous Effects: useLayoutEffect
+
+Signature: useLayoutEffect(effect: () => void | (() => void), deps?: DependencyList): void
+
+Fires synchronously after DOM manipulation but before the browser prints the layout
+to the display. Blocks the main rendering thread. Use exclusively to calculate layout measurements,
+bounding boxes, or scroll placements to prevent visual flickering.
+
+1.3 React Context API Architecture
+Context provides an internal state-broadcasting network to skip manual prop-drilling
+through intermediary components.
+
+Context Execution Pattern:
+
+TypeScript
+import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+
+type State = { theme: 'light' | 'dark' };
+type Action = { type: 'TOGGLE_THEME' };
+
+const ThemeStateContext = createContext<{ state: State; dispatch: React.Dispatch<Action> } | undefined>(undefined);
+
+const themeReducer = (state: State, action: Action): State => {
+  switch (action.type) {
+    case 'TOGGLE_THEME':
+      return { theme: state.theme === 'light' ? 'dark' : 'light' };
+    default:
+      return state;
+  }
+};
+
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
+  const [state, dispatch] = useReducer(themeReducer, { theme: 'light' });
+  return (
+    <ThemeStateContext.Provider value={{ state, dispatch }}>
+      {children}
+    </ThemeStateContext.Provider>
+  );
+};
+
+export const useTheme = () => {
+  const context = useContext(ThemeStateContext);
+  if (!context) {
+    throw new Error('useTheme must be verified inside a structural ThemeProvider container');
+  }
+  return context;
+};
+1.4 Performance Optimization and Render Control
+
+State Locality Optimization: Avoid hoisting state fields up to global stores or parent blocks
+if the data is isolated to a specific subtree. Confining states limits unnecessary component re-evaluation.
+
+Stable Map Array Keys: Avoid passing array iteration indexing flags (index) into the 'key' attribute
+of mapped element loops if the target list can be filtered, re-ordered, or modified. Use persistent,
+globally unique item primitives (such as string IDs) to help the diffing engine accurately track DOM nodes.
+
+Memoization with React.memo: Wraps functional components to perform a shallow equality test on incoming
+props. Prevents a component from re-rendering due to parent updates if its own props remain identical.
+================================================================================
+

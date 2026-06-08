@@ -1,0 +1,140 @@
+================================================================================
+TAILWIND CSS CORE ENGINE, UTILITY SYSTEMS, AND CONFIGURATION REFERENCE
+2.1 Production Compilation and Scanning Mechanics
+Tailwind CSS relies on an on-demand compilation engine. Instead of supplying a massive,
+monolithic CSS package containing pre-compiled layouts, the architecture scans configured
+project directories for explicit design utility tokens.
+
+Static Source Parsing Rules: The core regex scanner evaluates source code looking for complete, unbroken
+string literals. Dynamic class allocations using string concatenation like text-${color}-600 cannot
+be determined at compile time. The asset scanner will ignore incomplete definitions, and the
+corresponding CSS rule will not be built.
+
+Production Asset Trimming: During compilation, unused utility declarations are stripped away.
+The final production style sheet contains only the classes explicitly found in source files,
+shrinking the CSS bundle footprint to a highly optimized range of 10KB to 50KB.
+
+2.2 Design Token Unit Architecture
+Tailwind normalizes raw CSS layout rules into a predictable spacing and sizing scale based
+on rem units, where 1 spacing unit translates to 0.25rem (equal to 4px under standard 16px root font defaults).
+
+Sizing Scaling Invariants:
+
+w-1  = 0.25rem  = 4px
+
+w-4  = 1.00rem  = 16px
+
+w-16 = 4.00rem  = 64px
+
+w-64 = 16.00rem = 256px
+
+Box Model System:
+
+Padding: p-{size}, px-{size}, py-{size}, pt-{size}, pr-{size}, pb-{size}, pl-{size}
+
+Margin: m-{size}, mx-{size}, my-{size}, mt-{size}, mr-{size}, mb-{size}, ml-{size}
+
+Negative Structural Adjustments: Prefix the utility token with a minus sign: -m-4, -top-2.
+
+Flexbox Alignment Engines:
+
+flex: Sets display context to flex.
+
+flex-col: Arranges flex children vertically; flex-row: Arranges flex children horizontally.
+
+items-center: Centers children along the cross-axis (align-items: center).
+
+justify-between: Distributes children evenly along the main-axis (justify-content: space-between).
+
+gap-{size}: Assigns standard spacing intervals between flex items.
+
+Grid Layout Systems:
+
+grid: Activates grid layout patterns.
+
+grid-cols-12: Builds a 12-column grid tracks layout configuration.
+
+col-span-4: Directs a child grid cell to bridge 4 coordinate units across the grid container.
+
+2.3 State, DOM Pseudo-Class, and Adaptive Variant Modifiers
+Tailwind maps state modifications and responsive variants using a clear, prefix-colon syntax structure:
+[modifier]:[base-utility-class]
+
+Interactive pseudo-classes:
+
+hover: applies rules on mouse-over events (:hover).
+
+focus: target fields during active user focus cycles (:focus).
+
+active: targets element execution during active click states (:active).
+
+disabled: disables component interaction blocks (:disabled).
+
+Contextual Component Tracking:
+
+group-{modifier}: Monitors interactive states on a designated parent element tagged with the group class,
+updating nested child styling context automatically (e.g., group-hover:opacity-100).
+
+peer-{modifier}: Checks adjacent sibling elements tagged with the peer class to handle reactive
+styling changes based on sibling state changes (e.g., peer-invalid:border-red-500).
+
+Responsive Breakpoint Framework:
+Tailwind follows a strict mobile-first paradigm utilizing min-width media queries. Basic styles without
+prefixes apply to all screens, and larger breakpoint variations override them as screen width expands:
+
+sm: min-width 640px
+
+md: min-width 768px
+
+lg: min-width 1024px
+
+xl: min-width 1280px
+
+2xl: min-width 1536px
+
+Theme and System Flags:
+
+dark: overrides design tokens when the system context indicates active dark-mode preferences
+or when a .dark selector is manually applied higher up the DOM tree hierarchy.
+
+2.4 Central Architecture Configuration Matrix (tailwind.config.js)
+The tailwind.config.js control file configures file indexing limits, extends theme settings,
+and integrates custom core processing plug-ins.
+
+JavaScript
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  // Files and directories to check for Tailwind class names
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html"
+  ],
+  // Switches theme selection mechanism between system preference or programmatic classes
+  darkMode: 'class',
+  theme: {
+    // Overriding attributes inside 'extend' preserves standard fallback system tokens
+    extend: {
+      colors: {
+        brand: {
+          50: '#f4f6ff',
+          500: '#3b51f5',
+          900: '#1a2266',
+        },
+      },
+      animation: {
+        'fade-in-fast': 'fadeIn 0.15s ease-out forwards',
+      },
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(4px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+    },
+  },
+  plugins: [
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+  ],
+}
+================================================================================
