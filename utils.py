@@ -17,8 +17,8 @@ def call_ollama(user_prompt, system_prompt):
         "format": "json",
         "options": {
             "temperature": 0.1,
-            "num_ctx": 4096,
-            "num_predict": 4096
+            "num_ctx": 6144,
+            "num_predict": 6144
         }
     }
     
