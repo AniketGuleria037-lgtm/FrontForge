@@ -58,7 +58,7 @@ def parse_response(raw):
                 break
     
     data = json.loads(text[:end])
-    print(f"Parsed {len(data['files'])} files successfully")
+    print("Parsed response successfully")
     return data
 
 if __name__ == "__main__":
