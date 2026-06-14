@@ -6,29 +6,47 @@ from pathlib import Path
 from rag.retriever import retrieve
 
 def component_agent(state):
-    system_prompt=Path("prompts/components.txt").read_text(encoding="utf-8")
-    docs = retrieve("React components Tailwind CSS hooks")
-    user_prompt = f"""You must write the complete React JSX code for every file listed below.
+    print("✓ COMPONENT AGENT STARTED")
+    
+    system_prompt = Path("prompts/components.txt").read_text(encoding="utf-8")
+    files = state["ui_architecture"]["files"]
+    generated_files = []
 
-    For each file, generate the FULL working React component code.
-    Do NOT just describe the file. Write the actual code.
+    for file in files:
+        print(f"  Generating: {file['path']}")
+        
+        docs = retrieve("React components Tailwind CSS hooks")
+        
+        user_prompt = f"""Generate the complete React JSX code for this single file only.
 
-    Files to generate:
-    {state['ui_architecture']}
+        File to generate:
+        - Path: {file['path']}
+        - Description: {file['description']}
 
-    Relevant React and Tailwind documentation:
-    {docs}
+        Project context:
+        - Pages: {[f.get('path', '') for f in files if 'pages' in f.get('path', '')]}
+        - Components: {[f.get('path', '') for f in files if 'components' in f.get('path', '')]}
 
-    Output a JSON object where each file has:
-    - "path": the file path
-    - "content": the COMPLETE JSX code for that file
+        Relevant docs:
+        {docs[:500]}
 
-    Remember: Output ONLY the JSON object. Start with {{ and end with }}"""
+        Return JSON with exactly this structure:
+        {{"files": [{{"path": "{file['path']}", "content": "complete jsx code here"}}]}}
+        - Always include hardcoded sample data inside the component itself
+        - Never rely on parent to pass props without defaults
+        - If mapping over data, define the data array inside the component
+        Output ONLY the JSON object."""
 
-    raw=call_ollama(user_prompt, system_prompt)
-    response=parse_response(raw)
-    state["components"]=response
-    return state
+        raw = call_ollama(user_prompt, system_prompt)
+        response = parse_response(raw)
+        
+        if response and response.get("files"):
+            generated_files.extend(response["files"])
+            print(f"  ✓ Generated: {file['path']}")
+        else:
+            print(f"  ✗ Failed: {file['path']}")
+
+    return {"components": {"files": generated_files}}
 
 if __name__ == "__main__":
     test_state = {

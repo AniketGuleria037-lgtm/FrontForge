@@ -21,3 +21,35 @@ Rules:
 - Use hardcoded realistic data only, never fetch from external APIs.
 - Use Tailwind only for styling.
 - Generate complete code - no placeholders.
+- Always use correct relative import paths with .jsx extension
+- Pages import components using: ../components/ComponentName.jsx
+- App.jsx imports pages using: ./pages/PageName.jsx
+- App.jsx imports components using: ./components/ComponentName.jsx
+- CRITICAL: Generate ALL files listed in the architecture. 
+  Never skip any file.
+- CRITICAL: Every page in src/pages/ must be generated
+- CRITICAL: If App.jsx imports a page, that page file must exist
+CRITICAL IMPORT PATHS:
+- App.jsx is in src/ folder
+- App.jsx imports components: './components/ComponentName.jsx' (single dot)
+- App.jsx imports pages: './pages/PageName.jsx' (single dot)
+- Pages are in src/pages/ folder  
+- Pages import components: '../components/ComponentName.jsx' (double dot)
+- NEVER use '../components/' from App.jsx
+- NEVER use './components/' from src/pages/
+
+CRITICAL: Props must be consistent between parent and child.
+If Home.jsx passes title, description, price as separate props,
+the child component must accept title, description, price — NOT a product object.
+Always use flat props, never nested object props.
+
+CRITICAL: Every component must have default prop values.
+If a component accepts props, always add default values:
+Example:
+function CoffeeProductCard({ name = "Coffee", price = "$4.00", image = "" }) {
+
+CRITICAL: Never use external image URLs like placeholder.com or via.placeholder.com
+Instead use colored div placeholders:
+<div className="w-full h-48 bg-amber-200 flex items-center justify-center">
+  <span className="text-amber-800 text-4xl">☕</span>
+</div>

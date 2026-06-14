@@ -5,6 +5,7 @@ from utils import call_ollama, parse_response
 from pathlib import Path
 
 def package_agent(state):
+    print("✓ PACKAGE AGENT STARTED")
     system_prompt=Path("prompts/package.txt").read_text(encoding="utf-8")
     user_prompt = f"""Based on this project plan, determine the required npm 
     dependencies and executes installation commands in an isolated environment.
@@ -16,8 +17,7 @@ def package_agent(state):
 
     raw=call_ollama(user_prompt, system_prompt)
     response=parse_response(raw)
-    state["package"]=response
-    return state
+    return {"package": response}
 
 if __name__ == "__main__":
     test_state = {

@@ -6,13 +6,24 @@ from pathlib import Path
 import state
 
 def planner_agent(state):
+    print("✓ PLANNER AGENT STARTED")
+    print("  Specs received:", state["specs"])
     system_prompt=Path("prompts/planner.txt").read_text(encoding="utf-8")
-    user_prompt = f"Create a project plan for this app: {state['specs']}"
+    user_prompt = f"""Create a detailed project plan for this SPECIFIC app:
+
+    App description: "{state['user_prompt']}"
+    Specs: {state['specs']}
+
+    The pages and components must be SPECIFIC to this app.
+    For a coffee shop: Menu page, About page, coffee product cards
+    For a hospital: Patients page, Doctors page, appointment cards
+    For a portfolio: Projects page, Skills page, contact form
+
+    Output ONLY the JSON object."""
 
     raw=call_ollama(user_prompt, system_prompt)
     response=parse_response(raw)
-    state["plan"]=response
-    return state
+    return {"plan": response}
 
 if __name__ == "__main__":
     test_state = {

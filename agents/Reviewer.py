@@ -5,29 +5,41 @@ from utils import call_ollama, parse_response
 from pathlib import Path
 
 def reviewer_agent(state):
-    system_prompt=Path("prompts/review.txt").read_text(encoding="utf-8")
-    user_prompt = user_prompt = f"""You are reviewing React code. Find ALL errors and fix them.
+    print("✓ REVIEWER AGENT STARTED")
 
-    I have found these errors already — make sure you fix them:
-    1. Some components use class= instead of className=
-    2. Some components are missing export default at the end
+    if not state.get("style"):
+        print("WARNING: Style is None")
+        return {"review": {"passed": False, "issues": [], "fixed_files": []}}
 
-    Here are the files to review and fix:
+    files = state["style"]["files"]
+    fixed_files = []
 
-    {state['style']}
+    for file in files:
+        print(f"  Reviewing: {file['path']}")
+        content = file["content"]
+        
+        # Fix common errors directly in Python — no LLM needed
+        fixed_content = content
+        
+        # Fix 1: class= → className=
+        fixed_content = fixed_content.replace(' class=', ' className=')
+        
+        # Fix 2: ensure default export exists
+        if 'export default' not in fixed_content:
+            name = Path(file['path']).stem
+            fixed_content += f'\n\nexport default {name};'
+        
+        if fixed_content != content:
+            print(f"  ✓ Fixed issues in: {file['path']}")
+        else:
+            print(f"  ✓ No issues: {file['path']}")
+            
+        fixed_files.append({
+            "path": file["path"],
+            "content": fixed_content
+        })
 
-    Return a JSON object with:
-    - "passed": false if any errors found, true if none
-    - "issues": list of all errors found
-    - "fixed_files": ALL files with errors corrected
-
-    Remember: Output ONLY the JSON object. Start with {{ and end with }}"""
-    print("State style:", state['style'])
-
-    raw=call_ollama(user_prompt, system_prompt)
-    response=parse_response(raw)
-    state["review"]=response
-    return state
+    return {"review": {"passed": True, "issues": [], "fixed_files": fixed_files}}
 
 if __name__ == "__main__":
     test_state = {

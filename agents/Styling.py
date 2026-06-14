@@ -6,23 +6,40 @@ from pathlib import Path
 from rag.retriever import retrieve
 
 def styling_agent(state):
-    system_prompt=Path("prompts/styling.txt").read_text(encoding="utf-8")
-    docs = retrieve("Tailwind CSS hooks")
-    user_prompt = f"""Enhance the styling of these React components.
-    Make them look professional and visually consistent.
+    print("✓ STYLING AGENT STARTED")
+    print("  Components received:", "OK" if state["components"] else "NONE")
+    
+    system_prompt = Path("prompts/styling.txt").read_text(encoding="utf-8")
+    files = state["components"]["files"]
+    styled_files = []
 
-    Current components:
-    {state['components']}
+    for file in files:
+        print(f"  Styling: {file['path']}")
+        
+        user_prompt = f"""Improve the Tailwind CSS styling for this single React file.
+Keep all existing functionality. Only enhance the visual design.
 
-    Tailwind documentation:
-    {docs}
+File to style:
+Path: {file['path']}
+Current code:
+{file['content']}
 
-    Remember: Output ONLY the JSON object. Start with {{ and end with }}"""
+Return JSON:
+{{"files": [{{"path": "{file['path']}", "content": "improved code here"}}]}}
 
-    raw=call_ollama(user_prompt, system_prompt)
-    response=parse_response(raw)
-    state["style"]=response
-    return state
+Output ONLY the JSON object."""
+
+        raw = call_ollama(user_prompt, system_prompt)
+        response = parse_response(raw)
+        
+        if response and response.get("files"):
+            styled_files.extend(response["files"])
+            print(f"  ✓ Styled: {file['path']}")
+        else:
+            styled_files.append(file)
+            print(f"  ✗ Failed styling, keeping original: {file['path']}")
+
+    return {"style": {"files": styled_files}}
 
 if __name__ == "__main__":
     test_state = {

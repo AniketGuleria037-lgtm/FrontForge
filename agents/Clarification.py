@@ -16,24 +16,23 @@ def clarification_agent(state):
     if theme == "":
         theme = "Light"
     system_prompt=Path("prompts/clarification.txt").read_text(encoding="utf-8")
-    user_prompt = f"""Based on this app description and user preferences, 
-    create a structured specification.
+    user_prompt = f"""The user wants to build: "{state['user_prompt']}"
 
-    App description: {state['user_prompt']}
+    Framework preference: {framework}
+    Styling preference: {styling}  
+    Theme preference: {theme}
 
-    User preferences:
-    - Framework: {framework}
-    - Styling: {styling}
-    - Theme: {theme}
+    Based on the app description, infer:
+    - What specific pages this app needs
+    - What the app is actually about
+    - The complexity level
 
-    Infer the pages needed from the app description.
     Remember: Output ONLY the JSON object."""
 
     raw=call_ollama(user_prompt, system_prompt)
     response=parse_response(raw)
 
-    state["specs"]=response
-    return state
+    return {"specs": response}
 
 if __name__ == "__main__":
     test_state = {

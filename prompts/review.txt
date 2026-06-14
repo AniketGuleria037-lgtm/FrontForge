@@ -21,3 +21,11 @@ Rules:
 - Check for Classnames rather than Class.
 - Every component must have a default export.
 - Fix the errors rather than just reporting.
+
+- CRITICAL: fixed_files must contain ALL files not just the ones with errors
+- Return every file even if it has no errors
+
+- Fix all import paths — components must be imported with .jsx extension 
+e.g. import Navbar from '../components/Navbar.jsx'
+- Pages are in src/pages/ so components are at ../components/
+- Components are in src/components/ so other components are at ./

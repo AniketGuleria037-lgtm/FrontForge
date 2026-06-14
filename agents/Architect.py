@@ -5,6 +5,8 @@ from utils import call_ollama, parse_response
 from pathlib import Path
 
 def architect_agent(state):
+    print("✓ ARCHITECT AGENT STARTED")
+    print("  Plan received:", "OK" if state["plan"] else "NONE")
     system_prompt=Path("prompts/architect.txt").read_text(encoding="utf-8")
     user_prompt = f"""Based on this project plan, design the complete folder structure.
     Return a JSON object with a 'files' array. Each file must have 'path' and 'description'.
@@ -16,8 +18,7 @@ Remember: Output ONLY the JSON object. Start with {{ and end with }}"""
 
     raw=call_ollama(user_prompt, system_prompt)
     response=parse_response(raw)
-    state["ui_architecture"]=response
-    return state
+    return {"ui_architecture": response}
 
 if __name__ == "__main__":
     test_state = {
