@@ -257,4 +257,5 @@ def run_pipeline():
     else:
         print("Build failed:", error[:500])
 
-run_pipeline()
+if __name__ == "__main__":
+    run_pipeline()
