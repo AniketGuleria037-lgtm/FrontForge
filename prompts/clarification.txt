@@ -18,5 +18,5 @@ Rules:
 - JSON only output.
 - Default to React if not specified.
 - Default to Tailwind if not specified.
-- Infer all the pages from the user prompt
-- Make - simple if small app, complex if dashboard]
+- Infer all the pages from the user prompt.
+- Make - simple if small app, complex if dashboard.

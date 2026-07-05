@@ -8,7 +8,7 @@ from pathlib import Path
 
 # ── Configuration ──────────────────────────────────────
 OLLAMA_URL         = "http://localhost:11434/api/generate"
-MODEL              = "qwen3:4b"
+MODEL              = "qwen3:8b"
 OUTPUT_DIR         = Path("generated-app")
 SYSTEM_PROMPT_FILE = Path("prompts/system_prompt.txt")
 MAX_RETRIES        = 3
@@ -36,7 +36,7 @@ def call_ollama(user_prompt, system_prompt):
         }
     }
     
-    response = requests.post(OLLAMA_URL, json=payload, timeout=600)
+    response = requests.post(OLLAMA_URL, json=payload, timeout=900)
     raw = response.json()["response"]
     print(f"Received {len(raw)} characters from model")
     return raw
