@@ -1,0 +1,92 @@
+=== NAVBAR PATTERN ===
+<nav className="bg-white shadow-md fixed w-full z-50">
+  <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+    <h1 className="text-xl font-bold text-gray-800">Logo</h1>
+    <div className="flex space-x-6">
+      <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">Home</a>
+      <a href="#" className="text-gray-600 hover:text-blue-600 transition-colors">About</a>
+    </div>
+  </div>
+</nav>
+
+=== HERO SECTION PATTERN ===
+<section className="min-h-screen bg-gradient-to-br from-blue-600 to-purple-700 flex items-center justify-center text-white">
+  <div className="text-center px-4">
+    <h1 className="text-5xl font-bold mb-6">Welcome to Our App</h1>
+    <p className="text-xl mb-8 text-blue-100">Subtitle goes here</p>
+    <button className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-50 transition-colors">
+      Get Started
+    </button>
+  </div>
+</section>
+
+=== CARD PATTERN ===
+<div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+  <h3 className="text-xl font-bold text-gray-800 mb-2">Card Title</h3>
+  <p className="text-gray-600 mb-4">Card description goes here</p>
+  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+    Action
+  </button>
+</div>
+
+=== GRID LAYOUT PATTERN ===
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-8">
+  // cards go here
+</div>
+
+=== FOOTER PATTERN ===
+<footer className="bg-gray-900 text-white py-12">
+  <div className="container mx-auto px-4">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h3 className="text-xl font-bold mb-4">Brand</h3>
+        <p className="text-gray-400">Description here</p>
+      </div>
+    </div>
+    <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+      <p>© 2025 Brand Name. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+=== FORM PATTERN ===
+<form className="max-w-lg mx-auto bg-white rounded-xl shadow-lg p-8">
+  <div className="mb-6">
+    <label className="block text-gray-700 font-medium mb-2">Name</label>
+    <input type="text" className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+  </div>
+  <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+    Submit
+  </button>
+</form>
+
+=== STATS CARD PATTERN ===
+<div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
+  <p className="text-sm text-gray-500 mb-1">Total Users</p>
+  <p className="text-3xl font-bold text-gray-800">12,456</p>
+  <p className="text-sm text-green-500 mt-2">+12% from last month</p>
+</div>
+
+=== DARK THEME NAVBAR ===
+<nav className="bg-gray-900 text-white shadow-lg fixed w-full z-50">
+  <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+    <span className="text-xl font-bold text-blue-400">AppName</span>
+    <div className="flex space-x-6">
+      <a href="#" className="text-gray-300 hover:text-white transition-colors">Home</a>
+      <a href="#" className="text-gray-300 hover:text-white transition-colors">About</a>
+    </div>
+  </div>
+</nav>
+
+=== DARK HERO SECTION ===
+<section className="min-h-screen bg-gray-900 flex items-center justify-center">
+  <div className="text-center text-white px-4">
+    <h1 className="text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+      Hero Title
+    </h1>
+    <p className="text-xl text-gray-400 mb-8">Subtitle here</p>
+    <button className="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 transition-colors">
+      Get Started
+    </button>
+  </div>
+</section>

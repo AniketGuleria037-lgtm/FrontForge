@@ -15,7 +15,7 @@ def component_agent(state):
     for file in files:
         print(f"  Generating: {file['path']}")
         
-        docs = retrieve("React components Tailwind CSS hooks")
+        docs = retrieve("React functional component useState Tailwind CSS flexbox grid navbar hero card")
         
         user_prompt = f"""Generate the complete React JSX code for this single file only.
 

@@ -1,0 +1,109 @@
+=== FUNCTIONAL COMPONENT PATTERN ===
+import React from 'react'
+
+export default function ComponentName({ prop1, prop2 = 'default' }) {
+  return (
+    <div className="...">
+      <h1>{prop1}</h1>
+    </div>
+  )
+}
+
+=== USESTATE PATTERN ===
+import React, { useState } from 'react'
+
+export default function Counter() {
+  const [count, setCount] = useState(0)
+  const [name, setName] = useState('')
+  const [items, setItems] = useState([])
+
+  return (
+    <div>
+      <button onClick={() => setCount(count + 1)}>Count: {count}</button>
+    </div>
+  )
+}
+
+=== MAP OVER ARRAY PATTERN ===
+const items = [
+  { id: 1, name: 'Item One', price: '$10' },
+  { id: 2, name: 'Item Two', price: '$20' },
+]
+
+export default function ItemList() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      {items.map((item) => (
+        <div key={item.id} className="bg-white rounded-xl p-4 shadow">
+          <h3>{item.name}</h3>
+          <p>{item.price}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+=== STATE-BASED ROUTING PATTERN ===
+import React, { useState } from 'react'
+import Home from './pages/Home.jsx'
+import About from './pages/About.jsx'
+import Contact from './pages/Contact.jsx'
+
+export default function App() {
+  const [page, setPage] = useState('home')
+
+  return (
+    <div>
+      <nav>
+        <button onClick={() => setPage('home')}>Home</button>
+        <button onClick={() => setPage('about')}>About</button>
+        <button onClick={() => setPage('contact')}>Contact</button>
+      </nav>
+      {page === 'home' && <Home />}
+      {page === 'about' && <About />}
+      {page === 'contact' && <Contact />}
+    </div>
+  )
+}
+
+=== CONDITIONAL RENDERING ===
+export default function Component({ isLoggedIn, data }) {
+  if (!data) return <div>Loading...</div>
+  
+  return (
+    <div>
+      {isLoggedIn ? <p>Welcome back!</p> : <p>Please log in</p>}
+      {data.length > 0 && <ul>{data.map(item => <li key={item.id}>{item.name}</li>)}</ul>}
+    </div>
+  )
+}
+
+=== FORM WITH STATE ===
+import React, { useState } from 'react'
+
+export default function ContactForm() {
+  const [form, setForm] = useState({ name: '', email: '', message: '' })
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log(form)
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-8">
+      <input name="name" value={form.name} onChange={handleChange}
+        className="w-full border rounded-lg px-4 py-2 mb-4" placeholder="Your name" />
+      <input name="email" value={form.email} onChange={handleChange}
+        className="w-full border rounded-lg px-4 py-2 mb-4" placeholder="Email" />
+      <textarea name="message" value={form.message} onChange={handleChange}
+        className="w-full border rounded-lg px-4 py-2 mb-4 h-32" placeholder="Message" />
+      <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+        Send Message
+      </button>
+    </form>
+  )
+}
